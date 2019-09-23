@@ -13,7 +13,19 @@
 
 # Task B
 
-`__rdtsc()` average time 30 clock cycles
+| function          | average clock cycles |
+| ----------------- | -------------------- |
+| `__rdtsc()`       | 22.9                 |
+| `clock_gettime()` | 60.1                 |
+| `times()`         | 692.2                |
+
+
+
+
+# Task C
+
+
+
 
 # Task D
 

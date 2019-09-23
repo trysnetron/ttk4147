@@ -5,33 +5,42 @@
 #include <x86intrin.h>
 
 
-#define LATENCY_REPS 1000000
+#define LATENCY_REPS 10000000
 
 
 int main(void)
 {
     double total_time = 0;
-    unsigned long long last_time = __rdtsc();
-    unsigned long long now;    
+    unsigned long long start = __rdtsc();
+    
     for (int i=0; i<LATENCY_REPS; i++)
     {
-        now = __rdtsc();
-        total_time += now - last_time;
-        last_time = now;
+        __rdtsc();
     }
-    printf("Average latency for __rdtsc(): %f clock cycles\n", total_time / LATENCY_REPS);
+    unsigned long long stop = __rdtsc();
 
-    struct timespec now_2;
-    struct timespec last_time_2;
-    clock_gettime(CLOCK_MONOTONIC, &last_time_2);
-    total_time = 0;
+    printf("Average latency for __rdtsc(): %f clock cycles\n", (double)(stop - start) / LATENCY_REPS);
+
+
+
+    struct timespec dummy;
+    start = __rdtsc();
     for (int i=0; i<LATENCY_REPS; i++)
     {
-        clock_gettime(CLOCK_MONOTONIC, &now_2);
-        total_time += now_2.tv_sec - last_time_2.tv_sec;
-        last_time_2 = now_2;
+        clock_gettime(CLOCK_MONOTONIC, &dummy);
     }
-    printf("Average latency for clock_gettime(): %f clock cycles\n", total_time / LATENCY_REPS);
+    stop = __rdtsc();
+
+    printf("Average latency for clock_gettime(): %f clock cycles\n", (double)(stop - start) / LATENCY_REPS);
+
+
+    struct tms dummy_2;
+    start = __rdtsc();
+    for (int i=0; i<LATENCY_REPS; i++) times(&dummy_2);
+    stop = __rdtsc();
+
+    printf("Average latency for times(): %f clock cycles\n", (double)(stop - start) / LATENCY_REPS);
+
 
     return 0;
 }
